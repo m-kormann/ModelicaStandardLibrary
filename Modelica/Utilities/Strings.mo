@@ -231,6 +231,49 @@ contains(\"foo\", \"\");              // returns true
 </html>"));
   end contains;
 
+  function vectorContains "Check if a vector of strings contains a specific string element"
+    extends Modelica.Icons.Function;
+
+    input String v[:] "Vector to check";
+    input String e "String to search for";
+    output Boolean result;
+
+  algorithm
+
+    result := false;
+
+    for val in v loop
+      if e == val then
+        result := true;
+        break;
+      end if;
+    end for;
+
+    annotation (Documentation(info="<html>
+<p>Check if string element <code>e</code> can be found in String vector <code>v</code>.</p>
+
+<h4>Examples</h4>
+
+<pre class=\"code\">
+
+    import Modelica.Utilities.Strings.vectorContains;
+
+    vectorContains({\"foo\", \"bar\"}, \"foo\");
+     = true
+
+    vectorContains({\"foo\", \"bar\"}, \"baz\");
+     = false
+
+    vectorContains(fill(\"\", 0), \"foo\");
+     = false
+
+</pre>
+
+<p></p>
+
+</html>"));
+  end vectorContains;
+
   function count "Count the number of non-overlapping occurrences of a string"
     extends Modelica.Icons.Function;
     input String string "String that is analyzed";
@@ -518,6 +561,92 @@ s2 = Strings.sort(s1);
 <p>It is intended for ASCII, the case-insensitive sort is not guaranteed to work for UTF-8.</p>
 </html>"));
   end sort;
+
+  function startsWith "Check if a string starts with prefix"
+    extends Modelica.Icons.Function;
+
+    input String string "String to check";
+    input String prefix "Characters to look for";
+    output Boolean result;
+
+  protected
+    Integer len_str=length(string);
+    Integer len_pre=length(prefix);
+
+  algorithm
+    if len_pre > 0 and len_pre < len_str then
+      result := substring(string, 1, len_pre) == prefix;
+    else
+      result := string == prefix;
+    end if;
+
+    annotation (Documentation(info="<html>
+<p>Check if a string starts with a certain string sequence.</p>
+
+<h4>Examples</h4>
+
+<pre class=\"code\">
+
+    Modelica.Utilities.Strings.startsWith;
+
+    startsWith(\"foobar\", \"foo\");
+     = true
+
+    startsWith(\"foobar\", \"bar\");
+     = false
+
+    startsWith(\"foo\", \"\");
+     = false
+
+</pre>
+
+<p></p>
+
+</html>"));
+  end startsWith;
+
+  function endsWith "Check if a string ends with suffix"
+    extends Modelica.Icons.Function;
+
+    input String string "String to check";
+    input String suffix "Characters to look for";
+    output Boolean result;
+
+  protected
+    Integer len_str=length(string);
+    Integer len_suf=length(suffix);
+
+  algorithm
+    if len_suf > 0 and len_suf < len_str then
+      result := substring(string, len_str - len_suf + 1, len_str) == suffix;
+    else
+      result := string == suffix;
+    end if;
+
+    annotation (Documentation(info="<html>
+<p>Check if a string ends with a certain string sequence.</p>
+
+<h4>Examples</h4>
+
+<pre class=\"code\">
+
+    import Modelica.Utilities.Strings.endsWith;
+
+    endsWith(\"foobar\", \"foo\");
+     = false
+
+    endsWith(\"foobar\", \"bar\");
+     = true
+
+    endsWith(\"foo\", \"\");
+     = false
+
+</pre>
+
+<p></p>
+
+</html>"));
+  end endsWith;
 
   pure function hashString "Create a hash value of a string"
     extends Modelica.Icons.Function;
